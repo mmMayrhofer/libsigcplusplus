@@ -1,0 +1,21 @@
+name: "CI: Check Code Formatting"
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: ubuntu:20.04
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Check Code Formatting
+      run: |
+        # Prevent blocking the install on a question during configuring of tzdata.
+        export ENV DEBIAN_FRONTEND=noninteractive
+        apt update
+        apt install build-essential mm-common clang-format-10 --yes
+        alias clang-format="clang-format-10"
+        ./autogen.sh --enable-warnings=fatal
+        make check-format
